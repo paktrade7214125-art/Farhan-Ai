@@ -43,7 +43,7 @@ async function localCommand(raw) {
       [/^(?:chrome|google chrome|browser|براوزر|کروم)$/, "chrome", "Google in your default browser"],
       [/^(?:google|گوگل)$/, "google", "Google"],
       [/^(?:github|گٹ ہب)$/, "github", "GitHub"],
-      [/^(?:downloads|download folder|my downloads|ڈاؤن لوڈز|ڈاؤن لوڈ فولڈر)$/, "downloads", "Downloads folder"]
+      [/^(?:downloads|download folder|my downloads|downloads|download folder|my downloads|my downloads folder|ڈاؤن لوڈز|ڈاؤن لوڈ فولڈر)$/, "downloads", "Downloads folder"]
     ];
     for (const [pattern, key, label] of targets) if (pattern.test(targetText)) {
       const result = await window.farhanAI.openKnown(key);
@@ -57,7 +57,7 @@ async function localCommand(raw) {
       return `Theek ae bai, Google te “${search[1]}” search kar ditta.`;
     }
   }
-  const searchMatch = /^(?:find|search for|labh|labho|دھوڈو|تلاش کرو)\s+(?:my\s+)?(.+)$/i.exec(text);
+  const searchMatch = /^(?:find|search for|labh|labho|dhoondo|دھوڈو|تلاش کرو)/\s+(?:my\s+)?(.+)$/i.exec(text);
   if (searchMatch && /\b(pdf|html|file|files|project|document|documents|پی ڈی ایف|فائل)\b/i.test(searchMatch[1])) {
     const query = /\bpdf\b|پی ڈی ایف/i.test(searchMatch[1]) ? ".pdf" :
       /\bhtml\b/i.test(searchMatch[1]) ? ".html" :
