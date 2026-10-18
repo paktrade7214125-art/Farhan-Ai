@@ -1,58 +1,46 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#080b12">
-  <title>Farhan AI — Personal Assistant</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#080b12"><title>Farhan AI — Personal Assistant</title><link rel="stylesheet" href="styles.css"></head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar">
-      <a class="brand" href="#" aria-label="Farhan AI home">
-        <span class="brand-mark">F<span>✦</span></span>
-        <span><strong>FARHAN<span class="accent">.AI</span></strong><small>PERSONAL ASSISTANT</small></span>
-      </a>
-      <button class="new-chat" id="newChat"><span>＋</span> New conversation</button>
-      <div class="nav-label">WORKSPACE</div>
-      <button class="nav-item active" data-panel="assistant"><span>◈</span> Assistant <kbd>⌘ 1</kbd></button>
-      <button class="nav-item" id="folderButton"><span>▧</span> Choose workspace</button>
-      <div class="nav-label">QUICK ACTIONS</div>
-      <button class="quick-action" data-prompt="Help me plan my day into manageable tasks."><span class="quick-icon purple">✧</span><span><b>Plan my day</b><small>Organize priorities</small></span></button>
-      <button class="quick-action" data-prompt="Help me write or review some code. Ask me what project and files I am working with."><span class="quick-icon blue">{ }</span><span><b>Coding assistant</b><small>Think through a task</small></span></button>
-      <button class="quick-action" data-prompt="Give me a short, practical motivation plan for today."><span class="quick-icon amber">↗</span><span><b>Get motivated</b><small>One step at a time</small></span></button>
-      <div class="sidebar-spacer"></div>
-      <div class="provider-card"><span class="status-dot" id="providerDot"></span><span><b id="providerTitle">AI provider</b><small id="providerText">Checking configuration…</small></span><button id="providerInfo" title="Provider setup">ⓘ</button></div>
-      <div class="profile"><div class="avatar">FA</div><span><b>Farhan Ali</b><small>Personal workspace</small></span><span class="profile-menu">•••</span></div>
-    </aside>
-    <main class="main">
-      <header class="topbar"><div class="breadcrumb">Workspace <span>/</span> <b>Assistant</b></div><div class="top-actions"><span class="secure-label"><span>●</span> Private session</span><button class="icon-button" id="themeHint" title="Interface status">◐</button></div></header>
-      <section class="conversation" id="conversation">
-        <div class="welcome" id="welcome">
-          <div class="orb-wrap"><div class="orb"><span>F</span><i></i></div></div>
-          <div class="eyebrow"><span class="live-dot"></span> YOUR PERSONAL AI</div>
-          <h1>Hey Farhan, <span>what can I help<br class="desktop-break"> you with today?</span></h1>
-          <p>Your voice-first assistant for thinking, creating, and getting things done.</p>
-          <div class="suggestions">
-            <button class="suggestion" data-prompt="Help me build Farhan AI step by step according to the project roadmap."><span class="suggestion-icon">⌘</span><span><b>Build Farhan AI</b><small>Continue the project roadmap</small></span><span class="arrow">↗</span></button>
-            <button class="suggestion" data-prompt="Help me make a realistic plan for my goals today."><span class="suggestion-icon">◷</span><span><b>Plan my day</b><small>Turn goals into clear steps</small></span><span class="arrow">↗</span></button>
-            <button class="suggestion" data-prompt="Explain how to connect an AI provider to this app safely."><span class="suggestion-icon">⌁</span><span><b>Connect an AI model</b><small>Set up a provider securely</small></span><span class="arrow">↗</span></button>
-            <button class="suggestion" data-prompt="Help me write a small piece of code and explain how to run it."><span class="suggestion-icon">{ }</span><span><b>Write some code</b><small>Start with a small task</small></span><span class="arrow">↗</span></button>
-          </div>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="#" aria-label="Farhan AI home"><span class="brand-mark"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="#eafcff"/><path d="M9 14 7 5l10 6M31 14l2-9-10 6" fill="#eafcff" stroke="#9ee8f4" stroke-width="2" stroke-linejoin="round"/><ellipse cx="15" cy="19" rx="2" ry="3" fill="#15273b"/><ellipse cx="25" cy="19" rx="2" ry="3" fill="#15273b"/><path d="M18 24q2 3 4 0M20 22l-2 1h4z" fill="#15273b" stroke="#15273b" stroke-linecap="round"/></svg></span><span><strong>FARHAN<span class="accent">.AI</span></strong><small>YOUR DESKTOP COMPANION</small></span></a>
+    <button class="new-chat" id="newChat"><span>＋</span> New conversation</button>
+    <div class="nav-label">WORKSPACE</div>
+    <button class="nav-item active" data-panel="assistant"><span>◈</span> Assistant <kbd>VOICE + TEXT</kbd></button>
+    <button class="nav-item" id="folderButton"><span>▧</span> Choose workspace</button>
+    <div class="workspace-path" id="workspaceText">No workspace selected</div>
+    <div class="nav-label">QUICK ACTIONS</div>
+    <button class="quick-action" data-prompt="Help me plan my day into manageable tasks."><span class="quick-icon purple">✧</span><span><b>Plan my day</b><small>Organize priorities</small></span></button>
+    <button class="quick-action" data-prompt="Help me write or review some code. Ask me what project and files I am working with."><span class="quick-icon blue">{ }</span><span><b>Coding assistant</b><small>Think through a task</small></span></button>
+    <button class="quick-action" data-prompt="Give me a short, practical motivation plan for today."><span class="quick-icon amber">↗</span><span><b>Get motivated</b><small>One step at a time</small></span></button>
+    <div class="sidebar-spacer"></div>
+    <div class="provider-card"><span class="status-dot" id="providerDot"></span><span><b id="providerTitle">Checking app…</b><small id="providerText">Starting up</small></span><button id="providerInfo" title="Provider setup">ⓘ</button></div>
+    <div class="profile"><div class="avatar">FA</div><span><b>Farhan Ali</b><small>Personal workspace</small></span></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div class="breadcrumb">Farhan AI <span>/</span> <b>Assistant</b></div><div class="top-actions"><span class="secure-label"><span>●</span> Local actions protected</span><button class="icon-button" id="themeHint" title="Open settings">⚙</button></div></header>
+    <section class="conversation" id="conversation">
+      <div class="welcome" id="welcome">
+        <div class="orb-wrap"><div class="orb" aria-label="Farhan AI animated cat mascot"><div class="cat-face"><i class="ear left"></i><i class="ear right"></i><span class="eye left"></span><span class="eye right"></span><span class="nose"></span><span class="mouth"></span><span class="whiskers left"></span><span class="whiskers right"></span></div><span class="orb-spark"></span></div></div>
+        <div class="eyebrow"><span class="live-dot"></span> FARHAN AI <span class="status-pill" id="assistantStatus">Idle</span></div>
+        <h1>Haan bai, ki haal ae?<br><span>Dass, ajj ki karna ae?</span></h1>
+        <p>Your friendly desktop assistant. Talk, type, and get things done — with your permission.</p>
+        <div class="suggestions">
+          <button class="suggestion" data-prompt="Open YouTube"><span class="suggestion-icon">▶</span><span><b>Open YouTube</b><small>Try a local voice command</small></span><span class="arrow">↗</span></button>
+          <button class="suggestion" data-prompt="Open my Downloads folder"><span class="suggestion-icon">↓</span><span><b>Open Downloads</b><small>Access a known folder</small></span><span class="arrow">↗</span></button>
+          <button class="suggestion" data-prompt="Find my PDF files"><span class="suggestion-icon">⌕</span><span><b>Find my PDFs</b><small>Search selected workspace</small></span><span class="arrow">↗</span></button>
+          <button class="suggestion" data-prompt="Create folder named Projects"><span class="suggestion-icon">＋</span><span><b>Create a folder</b><small>Inside your workspace</small></span><span class="arrow">↗</span></button>
         </div>
-        <div class="messages" id="messages" aria-live="polite"></div>
-      </section>
-      <div class="composer-wrap">
-        <div class="composer">
-          <textarea id="messageInput" rows="1" placeholder="Message Farhan AI… (or use your voice)" aria-label="Message Farhan AI"></textarea>
-          <div class="composer-bottom"><div class="composer-tools"><button class="tool-button" id="voiceButton" title="Start voice input"><span>🎙</span><span id="voiceLabel">Voice input</span></button><span class="tool-divider"></span><span class="hint">AI can make mistakes. Review important actions.</span></div><button class="send-button" id="sendButton" aria-label="Send message">↑</button></div>
-        </div>
-        <div class="footer-note">Farhan AI <span>•</span> Built to assist, with your permission</div>
       </div>
-    </main>
-  </div>
-  <div class="toast" id="toast" role="status"></div>
-  <script src="renderer.js"></script>
-</body>
-</html>
+      <div class="messages" id="messages" aria-live="polite"></div>
+    </section>
+    <div class="composer-wrap">
+      <div class="composer"><textarea id="messageInput" rows="1" placeholder="Bai, dasso ki karna ae… (or type a command)" aria-label="Message Farhan AI"></textarea>
+        <div class="composer-bottom"><div class="composer-tools"><button class="tool-button" id="voiceButton" title="Start voice input"><span>◉</span><span id="voiceLabel">Voice command</span></button><span class="tool-divider"></span><span class="hint">Local commands work without an AI key</span></div><div class="composer-actions"><button class="stop-button" id="stopButton" hidden>Stop</button><button class="send-button" id="sendButton" aria-label="Send message">↑</button></div></div>
+      </div><div class="footer-note">Farhan AI <span>•</span> You stay in control of your computer</div>
+    </div>
+    <section class="settings-drawer" id="settingsDrawer" hidden><div class="settings-title"><b>Voice & preferences</b><button id="closeSettings" aria-label="Close settings">×</button></div><label>Recognition and speech language<select id="languageSelect"><option value="pa-PK">Punjabi / Pakistan (if supported)</option><option value="ur-PK">Urdu / Pakistan</option><option value="en-US">English</option></select></label><label class="check-setting"><input type="checkbox" id="voiceReplies"> Speak assistant replies aloud</label><p>Voice recognition support depends on the browser and may use an internet service. Text commands remain available.</p></section>
+  </main>
+</div><div class="toast" id="toast" role="status"></div><script src="renderer.js"></script>
+</body></html>
