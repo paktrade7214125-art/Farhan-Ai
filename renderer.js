@@ -34,47 +34,55 @@ function speakIfEnabled(text) {
 async function localCommand(raw) {
   if (!window.farhanAI) return null;
   const text = raw.trim().toLowerCase().replace(/[.!?،۔]+$/g, "");
-  const open = /^(?:please\s+)?(?:open|launch|kholo|khol do|khol de|chalao|chala de|چلاؤ|کھولو)\s+(.+)$/i.exec(text);
+
+  const search = /^(?:google\\s+)?search(?:\\s+google)?\\s+for\\s+(.+)$/i.exec(text) ||
+    /^(?:search|تلاش کرو|گوگل پر تلاش کرو)\\s+(.+)$/i.exec(text);
+  if (search) {
+    const url = "https://www.google.com/search?q=" + encodeURIComponent(search[1]);
+    await window.farhanAI.openSite(url);
+    return `Theek ae bai, Google te “${search[1]}” search kar ditta.`;
+  }
+
+  const open = /^(?:please\\s+)?(?:open|launch|kholo|khol do|khol de|chalao|chala de|چلاؤ|کھولو)\\s+(.+)$/i.exec(text);
   if (open) {
     const targetText = open[1].trim();
     const targets = [
-      [/^(?:youtube|یوٹیوب)(?:\s+.*)?$/, "youtube", "YouTube"],
-      [/^(?:whatsapp|واٹس ?ایپ)(?:\s+.*)?$/, "whatsapp", "WhatsApp Web"],
+      [/^(?:youtube|یوٹیوب)(?:\\s+.*)?$/, "youtube", "YouTube"],
+      [/^(?:whatsapp|واٹس ?ایپ)(?:\\s+.*)?$/, "whatsapp", "WhatsApp Web"],
       [/^(?:chrome|google chrome|browser|براوزر|کروم)$/, "chrome", "Google in your default browser"],
       [/^(?:google|گوگل)$/, "google", "Google"],
       [/^(?:github|گٹ ہب)$/, "github", "GitHub"],
-      [/^(?:downloads|download folder|my downloads|downloads|download folder|my downloads|my downloads folder|ڈاؤن لوڈز|ڈاؤن لوڈ فولڈر)$/, "downloads", "Downloads folder"]
+      [/^(?:downloads|download folder|my downloads|my downloads folder|ڈاؤن لوڈز|ڈاؤن لوڈ فولڈر)$/, "downloads", "Downloads folder"]
     ];
-    for (const [pattern, key, label] of targets) if (pattern.test(targetText)) {
-      const result = await window.farhanAI.openKnown(key);
-      return `Theek ae bai — ${label} khol ditta. ${result.detail || ""}`.trim();
-    }
-    const search = /^(?:google\s+)?search(?:\s+google)?\s+for\s+(.+)$/i.exec(text) ||
-      /^(?:search|تلاش کرو|گوگل پر تلاش کرو)\s+(.+)$/i.exec(text);
-    if (search) {
-      const url = "https://www.google.com/search?q=" + encodeURIComponent(search[1]);
-      await window.farhanAI.openSite(url);
-      return `Theek ae bai, Google te “${search[1]}” search kar ditta.`;
+    for (const [pattern, key, label] of targets) {
+      if (pattern.test(targetText)) {
+        const result = await window.farhanAI.openKnown(key);
+        return `Theek ae bai — ${label} khol ditta. ${result.detail || ""}`.trim();
+      }
     }
   }
-  const searchMatch = /^(?:find|search for|labh|labho|dhoondo|دھوڈو|تلاش کرو)/\s+(?:my\s+)?(.+)$/i.exec(text);
-  if (searchMatch && /\b(pdf|html|file|files|project|document|documents|پی ڈی ایف|فائل)\b/i.test(searchMatch[1])) {
-    const query = /\bpdf\b|پی ڈی ایف/i.test(searchMatch[1]) ? ".pdf" :
-      /\bhtml\b/i.test(searchMatch[1]) ? ".html" :
-      searchMatch[1].replace(/\b(my|file|files|project|document|documents)\b/gi, "").trim();
+
+  const searchMatch = /^(?:find|search for|labh|labho|dhoondo|دھوڈو|تلاش کرو)\\s+(?:my\\s+)?(.+)$/i.exec(text);
+  if (searchMatch && /\\b(pdf|html|file|files|project|document|documents|پی ڈی ایف|فائل)\\b/i.test(searchMatch[1])) {
+    const query = /\\bpdf\\b|پی ڈی ایف/i.test(searchMatch[1]) ? ".pdf" :
+      /\\bhtml\\b/i.test(searchMatch[1]) ? ".html" :
+      searchMatch[1].replace(/\\b(my|file|files|project|document|documents)\\b/gi, "").trim();
     const result = await window.farhanAI.searchFiles(query || ".");
     if (!result.matches.length) return "Bai, selected workspace vich koi matching file nahi labhi. Workspace select karke dubara try karo.";
-    const listed = result.matches.map((file, i) => `${i + 1}. ${file.name} — ${file.path}`).join("\n");
-    return `Eh files labhiyan ne:\n${listed}\n\nKise file nu kholan layi usda exact path chat vich paste karo. (File search workspace tak mehdood ae.)`;
+    const listed = result.matches.map((file, i) => `${i + 1}. ${file.name} — ${file.path}`).join("\\n");
+    return `Eh files labhiyan ne:\\n${listed}\\n\\nKise file nu kholan layi usda exact path chat vich paste karo. File search selected workspace tak mehdood ae.`;
   }
-  const folderMatch = /^(?:create|make|bnao|bana do|بنا دو)\s+(?:a\s+)?folder\s+(?:named\s+|called\s+)?(.+)$/i.exec(text) ||
-    /^(?:folder bnao|folder bana do)\s+(.+)$/i.exec(text);
+
+  const folderMatch = /^(?:create|make|bnao|bana do|بنا دو)\\s+(?:a\\s+)?folder\\s+(?:named\\s+|called\\s+)?(.+)$/i.exec(text) ||
+    /^(?:folder bnao|folder bana do)\\s+(.+)$/i.exec(text);
   if (folderMatch) {
     const result = await window.farhanAI.createFolder(folderMatch[1].replace(/^["']|["']$/g, "").trim());
     return `Done bai, folder create ho gaya: ${result.path}`;
   }
-  if (/^(?:open|kholo|کھولو)\s+(?:this\s+)?file\s+(.+)$/i.test(text)) {
-    const filePath = text.replace(/^(?:open|kholo|کھولو)\s+(?:this\s+)?file\s+/i, "").trim().replace(/^["']|["']$/g, "");
+
+  const fileOpen = /^(?:open|kholo|کھولو)\\s+(?:this\\s+)?file\\s+(.+)$/i.exec(text);
+  if (fileOpen) {
+    const filePath = fileOpen[1].trim().replace(/^["']|["']$/g, "");
     const result = await window.farhanAI.openWorkspaceFile(filePath);
     return `File open ho gayi: ${result.path}`;
   }
@@ -121,7 +129,7 @@ $("folderButton").addEventListener("click", async () => {
   catch (error) { showToast(error.message); }
 });
 $("providerInfo").addEventListener("click", () => showToast("AI chat layi GROQ_API_KEY ya OPENROUTER_API_KEY environment variable vich set karo. Local commands key ton bina vi chal sakdiyan ne."));
-$("themeHint").addEventListener("click", () => $("settingsDrawer").hidden = !$("settingsDrawer").hidden);
+$("themeHint").addEventListener("click", () => $("settingsDrawer").hidden = !$("settingsDrawer").hidden);\n$("closeSettings").addEventListener("click", () => $("settingsDrawer").hidden = true);
 $("voiceReplies").addEventListener("change", event => storage.set("farhanVoiceReplies", event.target.checked));
 $("languageSelect").addEventListener("change", event => storage.set("farhanLanguage", event.target.value));
 $("stopButton").addEventListener("click", () => {
