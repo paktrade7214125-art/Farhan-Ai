@@ -6,8 +6,20 @@ const ALLOWED_ORIGINS = new Set([
   "https://www.google.com", "https://youtube.com", "https://www.youtube.com",
   "https://web.whatsapp.com", "https://github.com", "https://vercel.com", "https://chatgpt.com"
 ]);
-let workspacePath = null;\nlet settings = { provider: "groq", model: "", encryptedApiKey: null };\nconst settingsPath = () => path.join(app.getPath("userData"), "settings.json");\nasync function saveSettings() {\n  const file = settingsPath();\n  await fs.mkdir(path.dirname(file), { recursive: true });\n  await fs.writeFile(file, JSON.stringify({ workspacePath, provider: settings.provider, model: settings.model, encryptedApiKey: settings.encryptedApiKey }, null, 2), "utf8");\n}\nfunction getApiKey() {\n  if (settings.encryptedApiKey && safeStorage.isEncryptionAvailable()) {\n    try { return safeStorage.decryptString(Buffer.from(settings.encryptedApiKey, "base64")); } catch {}\n  }\n  return settings.provider === "openrouter" ? process.env.OPENROUTER_API_KEY : process.env.GROQ_API_KEY;\n}
-
+let workspacePath = null;
+let settings = { provider: "groq", model: "", encryptedApiKey: null };
+const settingsPath = () => path.join(app.getPath("userData"), "settings.json");
+async function saveSettings() {
+  const file = settingsPath();
+  await fs.mkdir(path.dirname(file), { recursive: true });
+  await fs.writeFile(file, JSON.stringify({ workspacePath, provider: settings.provider, model: settings.model, encryptedApiKey: settings.encryptedApiKey }, null, 2), "utf8");
+}
+function getApiKey() {
+  if (settings.encryptedApiKey && safeStorage.isEncryptionAvailable()) {
+    try { return safeStorage.decryptString(Buffer.from(settings.encryptedApiKey, "base64")); } catch {}
+  }
+  return settings.provider === "openrouter" ? process.env.OPENROUTER_API_KEY : process.env.GROQ_API_KEY;
+}
 function isInsideWorkspace(candidate) {
   if (!workspacePath) return false;
   const relative = path.relative(workspacePath, path.resolve(candidate));
@@ -31,12 +43,14 @@ function createWindow() {
 }
 app.whenReady().then(async () => {
   try {
-    const settingsPath = path.join(app.getPath("userData"), "settings.json");
-    const settings = JSON.parse(await fs.readFile(settingsPath, "utf8"));
-    if (typeof settings.workspacePath === "string") {
-      const stat = await fs.stat(settings.workspacePath);
-      if (stat.isDirectory()) workspacePath = settings.workspacePath;
+    const saved = JSON.parse(await fs.readFile(settingsPath(), "utf8"));
+    if (typeof saved.workspacePath === "string") {
+      const stat = await fs.stat(saved.workspacePath);
+      if (stat.isDirectory()) workspacePath = saved.workspacePath;
     }
+    if (["groq", "openrouter"].includes(saved.provider)) settings.provider = saved.provider;
+    if (typeof saved.model === "string") settings.model = saved.model.slice(0, 160);
+    if (typeof saved.encryptedApiKey === "string") settings.encryptedApiKey = saved.encryptedApiKey;
   } catch {}
   createWindow();
   app.on("activate", () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
@@ -45,8 +59,26 @@ app.on("window-all-closed", () => { if (process.platform !== "darwin") app.quit(
 
 ipcMain.handle("farhan:status", () => ({
   appName: "Farhan AI", platform: process.platform, version: app.getVersion(),
-  mode: "desktop", workspacePath
+  mode: "desktop", workspacePath, provider: settings.provider, model: settings.model,
+  hasSavedKey: Boolean(settings.encryptedApiKey), keyStorageAvailable: safeStorage.isEncryptionAvailable()
 }));
+ipcMain.handle("farhan:provider-settings", () => ({
+  provider: settings.provider, model: settings.model, hasSavedKey: Boolean(settings.encryptedApiKey),
+  keyStorageAvailable: safeStorage.isEncryptionAvailable()
+}));
+ipcMain.handle("farhan:save-provider-settings", async (_event, input) => {
+  if (!input || !["groq", "openrouter"].includes(input.provider)) throw new Error("Choose Groq or OpenRouter.");
+  const model = typeof input.model === "string" ? input.model.trim().slice(0, 160) : "";
+  const apiKey = typeof input.apiKey === "string" ? input.apiKey.trim() : "";
+  if (apiKey.length > 500) throw new Error("API key is too long.");
+  if (apiKey && !safeStorage.isEncryptionAvailable()) throw new Error("Secure key storage is not available on this computer. Set the provider key as an environment variable instead.");
+  settings.provider = input.provider;
+  settings.model = model;
+  if (apiKey) settings.encryptedApiKey = safeStorage.encryptString(apiKey).toString("base64");
+  if (input.clearKey === true) settings.encryptedApiKey = null;
+  await saveSettings();
+  return { ok: true, provider: settings.provider, model: settings.model, hasSavedKey: Boolean(settings.encryptedApiKey) };
+});
 ipcMain.handle("farhan:open-site", async (_event, rawUrl) => {
   if (typeof rawUrl !== "string") throw new Error("Invalid website request.");
   let url;
@@ -61,9 +93,7 @@ ipcMain.handle("farhan:choose-folder", async () => {
   const result = await dialog.showOpenDialog({ properties: ["openDirectory", "createDirectory"] });
   if (result.canceled || !result.filePaths[0]) return { canceled: true };
   workspacePath = path.resolve(result.filePaths[0]);
-  const settingsPath = path.join(app.getPath("userData"), "settings.json");
-  await fs.mkdir(path.dirname(settingsPath), { recursive: true });
-  await fs.writeFile(settingsPath, JSON.stringify({ workspacePath }, null, 2), "utf8");
+  await saveSettings();
   return { canceled: false, path: workspacePath };
 });
 ipcMain.handle("farhan:open-known", async (_event, target) => {
@@ -140,12 +170,11 @@ ipcMain.handle("farhan:chat", async (_event, messages) => {
     return { role: m.role, content: m.content.slice(0, 6000) };
   });
   const system = { role: "system", content: "You are Farhan AI, a friendly Punjabi-first personal assistant. Default to natural Roman Punjabi, and understand Urdu and English. Be concise and casual. You can suggest supported local actions, but never claim you performed a computer action unless a tool result confirms it. Ask before consequential actions. You cannot run arbitrary shell commands." };
-  const openRouterKey = process.env.OPENROUTER_API_KEY;
-  const groqKey = process.env.GROQ_API_KEY;
-  if (!openRouterKey && !groqKey) return { text: "Haan bai, main ready aan! AI chat layi GROQ_API_KEY ya OPENROUTER_API_KEY set karo. Basic local commands bina AI key de vi chal sakdiyan ne." };
-  const endpoint = openRouterKey ? "https://openrouter.ai/api/v1/chat/completions" : "https://api.groq.com/openai/v1/chat/completions";
-  const key = openRouterKey || groqKey;
-  const model = openRouterKey ? (process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini") : (process.env.GROQ_MODEL || "llama-3.3-70b-versatile");
+  const openRouter = settings.provider === "openrouter";
+  const key = getApiKey();
+  if (!key) return { text: `Haan bai, ${openRouter ? "OpenRouter" : "Groq"} API key Settings vich add karo. Basic local commands bina AI key de vi chal sakdiyan ne.` };
+  const endpoint = openRouter ? "https://openrouter.ai/api/v1/chat/completions" : "https://api.groq.com/openai/v1/chat/completions";
+  const model = settings.model || (openRouter ? "openai/gpt-4o-mini" : "llama-3.3-70b-versatile");
   const response = await fetch(endpoint, {
     method: "POST",
     headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json",
