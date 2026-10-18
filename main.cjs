@@ -1,7 +1,6 @@
 const { app, BrowserWindow, ipcMain, shell, dialog } = require("electron");
 const path = require("node:path");
 const fs = require("node:fs/promises");
-const os = require("node:os");
 
 const ALLOWED_ORIGINS = new Set([
   "https://www.google.com", "https://youtube.com", "https://www.youtube.com",
@@ -16,7 +15,7 @@ function isInsideWorkspace(candidate) {
 }
 function safeName(value) {
   return typeof value === "string" && value.trim().length > 0 &&
-    value.trim().length <= 80 && !/[<>:"/\\|?*\x00-\x1f]/.test(value.trim()) &&
+    value.trim().length <= 80 && !/[<>:"\/\\|?*\x00-\x1f]/.test(value.trim()) &&
     !/^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\.|$)/i.test(value.trim());
 }
 function createWindow() {
