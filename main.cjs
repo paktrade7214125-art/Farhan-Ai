@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, shell, dialog } = require("electron");
+const { app, BrowserWindow, ipcMain, shell, dialog, safeStorage } = require("electron");
 const path = require("node:path");
 const fs = require("node:fs/promises");
 
@@ -6,7 +6,7 @@ const ALLOWED_ORIGINS = new Set([
   "https://www.google.com", "https://youtube.com", "https://www.youtube.com",
   "https://web.whatsapp.com", "https://github.com", "https://vercel.com", "https://chatgpt.com"
 ]);
-let workspacePath = null;
+let workspacePath = null;\nlet settings = { provider: "groq", model: "", encryptedApiKey: null };\nconst settingsPath = () => path.join(app.getPath("userData"), "settings.json");\nasync function saveSettings() {\n  const file = settingsPath();\n  await fs.mkdir(path.dirname(file), { recursive: true });\n  await fs.writeFile(file, JSON.stringify({ workspacePath, provider: settings.provider, model: settings.model, encryptedApiKey: settings.encryptedApiKey }, null, 2), "utf8");\n}\nfunction getApiKey() {\n  if (settings.encryptedApiKey && safeStorage.isEncryptionAvailable()) {\n    try { return safeStorage.decryptString(Buffer.from(settings.encryptedApiKey, "base64")); } catch {}\n  }\n  return settings.provider === "openrouter" ? process.env.OPENROUTER_API_KEY : process.env.GROQ_API_KEY;\n}
 
 function isInsideWorkspace(candidate) {
   if (!workspacePath) return false;
@@ -149,7 +149,7 @@ ipcMain.handle("farhan:chat", async (_event, messages) => {
   const response = await fetch(endpoint, {
     method: "POST",
     headers: { "Authorization": `Bearer ${key}`, "Content-Type": "application/json",
-      ...(openRouterKey ? { "HTTP-Referer": "https://farhan-ai.vercel.app", "X-Title": "Farhan AI" } : {}) },
+      ...(openRouter ? { "HTTP-Referer": "https://farhan-ai.vercel.app", "X-Title": "Farhan AI" } : {}) },
     body: JSON.stringify({ model, messages: [system, ...safeMessages], temperature: 0.6 })
   });
   if (!response.ok) throw new Error(`AI provider error (${response.status}): ${(await response.text()).slice(0, 400)}`);
