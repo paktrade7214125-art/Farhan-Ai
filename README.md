@@ -1,32 +1,65 @@
 # Farhan AI
 
-Farhan AI is a planned Windows-first personal desktop assistant. The goal is to combine typed and spoken AI chat with carefully permissioned local computer tools.
+Farhan AI is a Windows-first, voice-friendly personal assistant. This repository now contains an initial runnable Electron desktop scaffold and a web preview for the interface.
 
-> **Status:** Documentation and roadmap are being established. The repository's application implementation, runtime behavior, provider integrations, and tests have not yet been verified. Do not treat planned features as shipped.
+> **Current status:** Initial implementation added: Electron window, secure preload bridge, typed AI chat via Groq/OpenRouter, browser speech input where supported, a workspace folder picker, and a Vercel serverless chat endpoint. This is an early foundation, not yet a full Jarvis-style computer-control agent. General shell execution, arbitrary file edits, app control, persistent chat history, and full voice-command automation are not implemented.
 
-## Product direction
-- Electron, Node.js, HTML, CSS, and vanilla JavaScript.
-- OpenRouter and Groq as initial provider options; Gemini via Google AI Studio is a future integration until implemented and tested.
-- Typed chat, optional speech recognition and speech output, local conversation history.
-- Restricted file and folder tools within a user-approved workspace.
-- Clear confirmations for consequential actions; no arbitrary shell execution.
+## Stack
+- Electron + Node.js for the Windows desktop app.
+- HTML, CSS, and vanilla JavaScript for the UI.
+- Groq or OpenRouter for chat completion.
+- Vercel serverless endpoint for the browser preview.
 
-## Quick start
-The application is not yet verified as runnable. Once `package.json` and application source are implemented:
-1. Install a currently supported Node.js LTS release.
-2. Clone this repository and enter its folder.
-3. Run `npm install`.
-4. Run `npm start` if the package script has been added and verified.
+## Run the desktop app on Windows
 
-These commands are the intended workflow, not a claim that the current repository already supports them.
+1. Install a current Node.js LTS release.
+2. Clone the repository and open a terminal in the repository folder.
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Set **one** provider key in your terminal before launching. For PowerShell:
+   ```powershell
+   $env:GROQ_API_KEY="your_key_here"
+   npm start
+   ```
+   Or use OpenRouter:
+   ```powershell
+   $env:OPENROUTER_API_KEY="your_key_here"
+   npm start
+   ```
 
-## Providers
-Provider configuration is planned for Settings. Never commit API keys. Consult [AI providers](docs/AI_PROVIDERS.md) before implementing an adapter. API usage may incur charges or rate limits depending on provider/account.
+The key is read by the Electron main process; do not put it in `renderer.js`, HTML, or any committed file. Restart the app after setting environment variables. Provider usage may incur charges or rate limits.
 
-## Permissions and voice
-Voice support depends on browser/OS capabilities and permissions. The planned filesystem tools must remain restricted to an explicitly approved workspace. See [Security](docs/SECURITY.md).
+## Vercel web preview
 
-## Documentation
+The root `index.html` serves the UI, and `api/chat.js` handles chat requests server-side. The browser preview does **not** have permission to control your Windows computer.
+
+In Vercel Project Settings → Environment Variables, add either `GROQ_API_KEY` or `OPENROUTER_API_KEY` for Preview and Production, then redeploy. Never expose the provider key in a `NEXT_PUBLIC_*` variable or client-side JavaScript.
+
+## Voice input
+
+The microphone button uses the browser's SpeechRecognition API when supported. Browser and OS microphone permission is required. Speech recognition availability varies by browser; typed chat remains available.
+
+## Safety boundaries
+
+- Electron renderer runs with Node integration disabled and context isolation enabled.
+- The preload exposes a small allowlisted API rather than raw Node or shell access.
+- External website opening is limited to a small HTTPS allowlist.
+- No arbitrary shell commands or model-generated code are executed.
+- The folder picker currently selects a folder but file reading/writing tools are not yet implemented.
+
+## Roadmap from here
+
+1. Add automated tests and verify desktop startup/build.
+2. Add user-approved workspace-scoped file tools with path validation.
+3. Add explicit confirmation dialogs for any consequential local action.
+4. Add settings UI for provider/model selection and secure local configuration.
+5. Add local conversation persistence and speech output controls.
+6. Add carefully scoped app/window automation only after permission and safety design.
+
+## Project documents
+
 - [Agent instructions](AGENTS.md)
 - [Product requirements](PRD.md)
 - [Architecture](ARCHITECTURE.md)
@@ -41,12 +74,3 @@ Voice support depends on browser/OS capabilities and permissions. The planned fi
 - [Feature request template](docs/templates/FEATURE_REQUEST.md)
 - [Implementation prompt template](docs/templates/IMPLEMENT_FEATURE.md)
 - [Architecture decisions](docs/decisions/README.md)
-
-## Troubleshooting
-- If startup fails, inspect the exact error and check that the installed Node.js version meets the package's declared engine requirement.
-- If chat cannot connect, verify provider selection, key, model ID, network access, provider status, and rate limits. Never paste secrets into issues or logs.
-- If microphone input is unavailable, check OS/app permission and use typed input.
-- If a feature is listed as planned, it is not available until implemented and verified.
-
-## Security
-Keep renderer privileges minimal, validate all tool arguments in the main process, scope filesystem access to approved paths, and ask for confirmation before consequential operations. Read [SECURITY.md](docs/SECURITY.md) before contributing.
