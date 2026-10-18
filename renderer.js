@@ -33,7 +33,7 @@ function speakIfEnabled(text) {
 }
 async function localCommand(raw) {
   if (!window.farhanAI) return null;
-  const text = raw.trim().toLowerCase().replace(/[.!?،۔]+$/g, "");
+  const original = raw.trim();\n  const text = original.toLowerCase().replace(/[.!?،۔]+$/g, "");
 
   const search = /^(?:google\s+)?search(?:\s+google)?\s+for\s+(.+)$/i.exec(text) ||
     /^(?:search|تلاش کرو|گوگل پر تلاش کرو)\s+(.+)$/i.exec(text);
