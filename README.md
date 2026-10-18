@@ -10,7 +10,13 @@ Farhan AI is a Windows-first desktop companion with a Punjabi-first voice/text i
 - In-app Settings panel to choose Groq or OpenRouter, set a model override, securely save/remove an API key in the desktop app, and show the configured-key status. Groq and OpenRouter can be used independently.
 - Web preview has no permission to control the local computer. The desktop app is required for local commands.
 
-## AI provider settings\nOpen the gear icon in the app. Choose **Groq** or **OpenRouter**, optionally enter a model ID, paste the provider API key, and press **Save API settings**. In the desktop app, the key is encrypted with Electron safeStorage when the OS supports secure storage; the renderer never reads it back. Remove it with **Remove saved key**. If secure storage is unavailable, use an environment variable instead.\n\nFor the web preview, API keys must remain server-side in Vercel Project Settings → Environment Variables (`GROQ_API_KEY` or `OPENROUTER_API_KEY`); the browser settings UI cannot safely save provider secrets. The desktop app uses the selected provider and model. Default models are `llama-3.3-70b-versatile` for Groq and `openai/gpt-4o-mini` for OpenRouter.\n\n## Run on Windows
+## AI provider settings
+
+Open the gear icon in the app. Choose **Groq** or **OpenRouter**, optionally enter a model ID, paste the provider API key, and press **Save API settings**. In the desktop app, the key is encrypted with Electron safeStorage when the OS supports secure storage; the renderer never reads it back. Remove it with **Remove saved key**. If secure storage is unavailable, use an environment variable instead.
+
+For the web preview, API keys must remain server-side in Vercel Project Settings → Environment Variables (`GROQ_API_KEY` or `OPENROUTER_API_KEY`); the browser settings UI cannot safely save provider secrets. The desktop app uses the selected provider and model. Default models are `llama-3.3-70b-versatile` for Groq and `openai/gpt-4o-mini` for OpenRouter.
+
+## Run on Windows
 1. Install a current Node.js LTS release.
 2. Clone this repository and run `npm install`.
 3. Optional, for AI conversation (basic local commands do not need a key), set one provider key in PowerShell:
