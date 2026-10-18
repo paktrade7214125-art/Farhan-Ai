@@ -7,10 +7,10 @@ Farhan AI is a Windows-first desktop companion with a Punjabi-first voice/text i
 - Punjabi-first Roman Punjabi assistant prompt, with selectable Punjabi/Pakistan, Urdu/Pakistan, and English speech settings where browser speech support exists.
 - Typed chat, browser speech recognition, optional spoken replies, stop-speaking/task feedback, saved local conversation history, and saved preferences.
 - Supported local commands in the desktop app: open YouTube, WhatsApp Web, Google/default browser, GitHub, and Downloads; Google search; choose and persist a workspace; search files in that workspace; create a folder in that workspace; open a file by its full path inside that workspace.
-- Groq/OpenRouter AI chat, if a provider key is configured.
+- In-app Settings panel to choose Groq or OpenRouter, set a model override, securely save/remove an API key in the desktop app, and show the configured-key status. Groq and OpenRouter can be used independently.
 - Web preview has no permission to control the local computer. The desktop app is required for local commands.
 
-## Run on Windows
+## AI provider settings\nOpen the gear icon in the app. Choose **Groq** or **OpenRouter**, optionally enter a model ID, paste the provider API key, and press **Save API settings**. In the desktop app, the key is encrypted with Electron safeStorage when the OS supports secure storage; the renderer never reads it back. Remove it with **Remove saved key**. If secure storage is unavailable, use an environment variable instead.\n\nFor the web preview, API keys must remain server-side in Vercel Project Settings → Environment Variables (`GROQ_API_KEY` or `OPENROUTER_API_KEY`); the browser settings UI cannot safely save provider secrets. The desktop app uses the selected provider and model. Default models are `llama-3.3-70b-versatile` for Groq and `openai/gpt-4o-mini` for OpenRouter.\n\n## Run on Windows
 1. Install a current Node.js LTS release.
 2. Clone this repository and run `npm install`.
 3. Optional, for AI conversation (basic local commands do not need a key), set one provider key in PowerShell:
