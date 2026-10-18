@@ -1,7 +1,9 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("farhanAI", Object.freeze({
-  getStatus: () => ipcRenderer.invoke("farhan:status"),\n  getProviderSettings: () => ipcRenderer.invoke("farhan:provider-settings"),\n  saveProviderSettings: (settings) => ipcRenderer.invoke("farhan:save-provider-settings", settings),
+  getStatus: () => ipcRenderer.invoke("farhan:status"),
+  getProviderSettings: () => ipcRenderer.invoke("farhan:provider-settings"),
+  saveProviderSettings: (settings) => ipcRenderer.invoke("farhan:save-provider-settings", settings),
   openSite: (url) => ipcRenderer.invoke("farhan:open-site", url),
   openKnown: (target) => ipcRenderer.invoke("farhan:open-known", target),
   chooseFolder: () => ipcRenderer.invoke("farhan:choose-folder"),
