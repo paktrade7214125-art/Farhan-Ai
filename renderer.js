@@ -159,35 +159,6 @@ $("clearApiKey").addEventListener("click", async () => {
     showToast("Saved key removed. Environment variable fallback may still be active.");
   } catch (error) { showToast(error.message || "Could not remove saved key."); }
 });
-$("providerSelect").addEventListener("change", () => {
-  $("apiKeyStatus").textContent = $("providerSelect").value === "groq" ? "Groq API key selected" : "OpenRouter API key selected";
-});
-$("saveApiSettings").addEventListener("click", async () => {
-  const provider = $("providerSelect").value;
-  const model = $("modelInput").value.trim();
-  const apiKey = $("apiKeyInput").value.trim();
-  if (!window.farhanAI?.saveProviderSettings) {
-    showToast("Web preview: add GROQ_API_KEY or OPENROUTER_API_KEY in Vercel Project Settings → Environment Variables, then redeploy.");
-    return;
-  }
-  try {
-    const result = await window.farhanAI.saveProviderSettings({ provider, model, apiKey });
-    $("apiKeyInput").value = "";
-    $("apiKeyStatus").textContent = result.hasSavedKey ? "API key saved securely on this computer" : "No saved key; environment variable will be used if available";
-    showToast("API settings saved. Farhan AI will use " + (provider === "groq" ? "Groq" : "OpenRouter") + ".");
-  } catch (error) { showToast(error.message || "Could not save API settings."); }
-});
-$("clearApiKey").addEventListener("click", async () => {
-  if (!window.farhanAI?.saveProviderSettings) return showToast("Web preview keys are managed in Vercel Environment Variables.");
-  try {
-    const result = await window.farhanAI.saveProviderSettings({ provider: $("providerSelect").value, model: $("modelInput").value, clearKey: true });
-    $("apiKeyInput").value = "";
-    $("apiKeyStatus").textContent = "Saved API key removed";
-    showToast("Saved key removed. Environment variable fallback may still be active.");
-  } catch (error) { showToast(error.message || "Could not remove saved key."); }
-});
-$("voiceReplies").addEventListener("change", event => storage.set("farhanVoiceReplies", event.target.checked));
-$("languageSelect").addEventListener("change", event => storage.set("farhanLanguage", event.target.value));
 $("stopButton").addEventListener("click", () => {
   stopRequested = true;
   if (recognition) { recognition.stop(); recognition = null; }
