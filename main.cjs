@@ -125,11 +125,13 @@ ipcMain.handle("farhan:search-files", async (_event, query) => {
 });
 ipcMain.handle("farhan:open-workspace-file", async (_event, rawPath) => {
   if (typeof rawPath !== "string" || !isInsideWorkspace(rawPath)) throw new Error("For safety, only files inside your selected workspace can be opened.");
-  const stat = await fs.stat(rawPath);
+  const realPath = await fs.realpath(rawPath);
+  if (!isInsideWorkspace(realPath)) throw new Error("That file resolves outside your selected workspace.");
+  const stat = await fs.stat(realPath);
   if (!stat.isFile()) throw new Error("That path is not a file.");
-  const error = await shell.openPath(rawPath);
+  const error = await shell.openPath(realPath);
   if (error) throw new Error(error);
-  return { ok: true, path: rawPath };
+  return { ok: true, path: realPath };
 });
 ipcMain.handle("farhan:chat", async (_event, messages) => {
   if (!Array.isArray(messages) || messages.length > 30) throw new Error("Invalid chat history.");
