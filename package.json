@@ -1,0 +1,24 @@
+{
+  "name": "farhan-ai",
+  "version": "0.1.0",
+  "description": "Farhan AI - a voice-first personal assistant for Windows",
+  "main": "main.cjs",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^36.0.0",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "appId": "com.farhanai.desktop",
+    "productName": "Farhan AI",
+    "directories": { "output": "release" },
+    "files": ["main.cjs", "preload.cjs", "index.html", "styles.css", "renderer.js", "package.json"],
+    "win": { "target": "nsis" }
+  }
+}
