@@ -199,7 +199,7 @@ $("voiceButton").addEventListener("click", () => {
       $("providerTitle").textContent = "Desktop app ready";
       if (status.provider) $("providerSelect").value = status.provider;
       $("modelInput").value = status.model || "";
-      $("apiKeyStatus").textContent = status.hasSavedKey ? "API key saved securely on this computer" : "No saved key; environment variable may be used";\n      if (status.provider) $("providerSelect").value = status.provider;\n      $("modelInput").value = status.model || "";\n      $("apiKeyStatus").textContent = status.hasSavedKey ? "API key saved securely on this computer" : "No saved key; environment variable may be used";
+      $("apiKeyStatus").textContent = status.hasSavedKey ? "API key saved securely on this computer" : "No saved key; environment variable may be used";
       $("providerText").textContent = status.platform + (status.workspacePath ? " • workspace ready" : " • choose workspace");
       if (status.workspacePath) { workspacePath = status.workspacePath; $("workspaceText").textContent = status.workspacePath; }
     } catch {}
