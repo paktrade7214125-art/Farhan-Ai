@@ -33,7 +33,8 @@ function speakIfEnabled(text) {
 }
 async function localCommand(raw) {
   if (!window.farhanAI) return null;
-  const original = raw.trim();\n  const text = original.toLowerCase().replace(/[.!?،۔]+$/g, "");
+  const original = raw.trim();
+  const text = original.toLowerCase().replace(/[.!?،۔]+$/g, "");
 
   const search = /^(?:google\s+)?search(?:\s+google)?\s+for\s+(.+)$/i.exec(text) ||
     /^(?:search|تلاش کرو|گوگل پر تلاش کرو)\s+(.+)$/i.exec(text);
@@ -73,14 +74,14 @@ async function localCommand(raw) {
     return `Eh files labhiyan ne:\n${listed}\n\nKise file nu kholan layi usda exact path chat vich paste karo. File search selected workspace tak mehdood ae.`;
   }
 
-  const folderMatch = /^(?:create|make|bnao|bana do|بنا دو)\s+(?:a\s+)?folder\s+(?:named\s+|called\s+)?(.+)$/i.exec(text) ||
-    /^(?:folder bnao|folder bana do)\s+(.+)$/i.exec(text);
+  const folderMatch = /^(?:create|make|bnao|bana do|بنا دو)\s+(?:a\s+)?folder\s+(?:named\s+|called\s+)?(.+)$/i.exec(original) ||
+    /^(?:folder bnao|folder bana do)\s+(.+)$/i.exec(original);
   if (folderMatch) {
     const result = await window.farhanAI.createFolder(folderMatch[1].replace(/^["']|["']$/g, "").trim());
     return `Done bai, folder create ho gaya: ${result.path}`;
   }
 
-  const fileOpen = /^(?:open|kholo|کھولو)\s+(?:this\s+)?file\s+(.+)$/i.exec(text);
+  const fileOpen = /^(?:open|kholo|کھولو)\s+(?:this\s+)?file\s+(.+)$/i.exec(original);
   if (fileOpen) {
     const filePath = fileOpen[1].trim().replace(/^["']|["']$/g, "");
     const result = await window.farhanAI.openWorkspaceFile(filePath);
