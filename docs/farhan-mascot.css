@@ -1,0 +1,32 @@
+
+/* Farhan AI mascot, status states, and working settings drawer */
+.brand-mark{width:42px;height:42px;border-radius:14px;border:1px solid #344c60;background:#101b2a;display:grid;place-items:center;box-shadow:0 0 24px #56d7ef14}
+.brand-mark svg{width:36px;height:36px}
+.workspace-path{font-size:10px;line-height:1.5;color:#78869d;overflow-wrap:anywhere;padding:7px 10px 0}
+.orb-wrap{height:164px;display:grid;place-items:center;margin:24px 0 12px}
+.orb{width:132px;height:132px;background:radial-gradient(circle at 32% 22%,#fff 0%,#f7fdff 42%,#d9f6ff 72%,#9adceb 100%);border:1px solid #fff;box-shadow:0 0 0 8px #a7eaff09,0 0 52px #50d8f44a,0 0 110px #419ed91a,inset -9px -12px 22px #73bdd744,inset 7px 7px 18px #fff;animation:orb-float 5s ease-in-out infinite;position:relative}
+.cat-face{position:relative;width:86px;height:72px;background:#f8fdff;border-radius:48% 48% 44% 44%;box-shadow:0 4px 14px #4babc51a}
+.cat-face .ear{position:absolute;top:-12px;width:27px;height:33px;background:#f8fdff;border:2px solid #d8f7ff;clip-path:polygon(50% 0,100% 100%,0 100%);z-index:0}
+.cat-face .ear.left{left:2px;transform:rotate(-17deg)}.cat-face .ear.right{right:2px;transform:rotate(17deg)}
+.cat-face .eye{position:absolute;top:28px;width:8px;height:12px;border-radius:50%;background:#19334a;box-shadow:0 0 0 2px #19334a0a;animation:blink 5.5s infinite}
+.cat-face .eye.left{left:23px}.cat-face .eye.right{right:23px}
+.cat-face .nose{position:absolute;top:43px;left:41px;width:6px;height:5px;background:#6ec7dc;border-radius:50% 50% 60% 60%}
+.cat-face .mouth{position:absolute;top:46px;left:37px;width:14px;height:8px;border-bottom:2px solid #315b70;border-radius:0 0 12px 12px}
+.cat-face .whiskers{position:absolute;top:47px;width:17px;height:1px;background:#a1d8e4}.cat-face .whiskers:after{content:"";position:absolute;top:6px;width:15px;height:1px;background:#a1d8e4}
+.cat-face .whiskers.left{left:0;transform:rotate(8deg)}.cat-face .whiskers.right{right:0;transform:rotate(-8deg)}
+.orb-spark{position:absolute;width:8px;height:8px;top:24px;right:27px;border-radius:50%;background:#fff;box-shadow:0 0 13px #fff}
+@keyframes orb-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes blink{0%,43%,47%,100%{transform:scaleY(1)}45%{transform:scaleY(.12)}}
+.status-pill{font-size:9px;letter-spacing:.5px;color:#b4f5ff;background:#122c39;border:1px solid #245265;border-radius:999px;padding:4px 8px}
+body[data-state="listening"] .orb{box-shadow:0 0 0 9px #59d9ff14,0 0 65px #4cdcff7a;animation:listen-pulse 1.2s ease-in-out infinite}
+body[data-state="thinking"] .orb{animation:think-pulse 1.1s ease-in-out infinite}
+body[data-state="speaking"] .cat-face{transform:scale(1.04)}
+@keyframes listen-pulse{50%{box-shadow:0 0 0 17px #59d9ff0a,0 0 80px #4cdcff88}}
+@keyframes think-pulse{50%{filter:brightness(1.08);transform:scale(1.025)}}
+.composer-actions{display:flex;align-items:center;gap:8px}
+.stop-button{height:34px;padding:0 12px;border:1px solid #653d4b;background:#2a1721;color:#ffb5c4;border-radius:9px;cursor:pointer;font-size:11px}
+.settings-drawer{position:absolute;z-index:5;right:24px;top:78px;width:min(340px,calc(100vw - 32px));padding:18px;background:#101725;border:1px solid #2b354a;border-radius:15px;box-shadow:0 18px 55px #0009}
+.settings-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:17px}.settings-title button{background:transparent;border:0;color:#b9c5d9;font-size:22px;cursor:pointer}
+.settings-drawer label{display:block;color:#dbe4f4;font-size:12px;margin:13px 0}.settings-drawer select{display:block;width:100%;margin-top:8px;padding:9px;background:#0b111c;border:1px solid #303a50;border-radius:8px;color:#edf1fb}
+.settings-drawer .check-setting{display:flex;gap:9px;align-items:center}.settings-drawer p{font-size:10px;line-height:1.6;color:#8592a9}
+@media(max-width:650px){.orb-wrap{margin-top:8px;height:140px}.orb{width:112px;height:112px}.cat-face{transform:scale(.88)}.hint{display:none}.settings-drawer{right:10px;top:64px}}
