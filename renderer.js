@@ -129,7 +129,8 @@ $("folderButton").addEventListener("click", async () => {
   catch (error) { showToast(error.message); }
 });
 $("providerInfo").addEventListener("click", () => showToast("AI chat layi GROQ_API_KEY ya OPENROUTER_API_KEY environment variable vich set karo. Local commands key ton bina vi chal sakdiyan ne."));
-$("themeHint").addEventListener("click", () => $("settingsDrawer").hidden = !$("settingsDrawer").hidden);\n$("closeSettings").addEventListener("click", () => $("settingsDrawer").hidden = true);
+$("themeHint").addEventListener("click", () => $("settingsDrawer").hidden = !$("settingsDrawer").hidden);
+$("closeSettings").addEventListener("click", () => $("settingsDrawer").hidden = true);
 $("voiceReplies").addEventListener("change", event => storage.set("farhanVoiceReplies", event.target.checked));
 $("languageSelect").addEventListener("change", event => storage.set("farhanLanguage", event.target.value));
 $("stopButton").addEventListener("click", () => {
